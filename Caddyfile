@@ -1,0 +1,66 @@
+{
+	email {$EMAIL_ADMIN:admin@localhost}
+	default_sni {$DOMAIN}
+	log {
+		output stdout
+		format json
+	}
+}
+
+{$DOMAIN}:443 {
+	tls {
+		issuer internal
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000;"
+		X-Frame-Options "DENY"
+		X-Content-Type-Options "nosniff"
+	}
+
+	handle /health {
+		respond "OK" 200
+	}
+
+	# API de llama-server (OpenAI-compat /v1): SIEMPRE requiere X-API-Key válida.
+	@llama_api {
+		path /v1/*
+	}
+	handle @llama_api {
+		@valid_key {
+			header X-API-Key "{$OLLAMA_API_KEY}"
+		}
+		handle @valid_key {
+			reverse_proxy llama:8080 {
+				transport http {
+					response_header_timeout 10m
+				}
+			}
+		}
+		respond `{"error": "Access denied. Invalid API Key."}` 401
+	}
+
+	# API de Qwen3.5 (OpenAI-compat bajo /ollama/*): misma key, distinto modelo.
+	@ollama_api {
+		path /ollama/*
+	}
+	handle @ollama_api {
+		@valid_key_ollama {
+			header X-API-Key "{$OLLAMA_API_KEY}"
+		}
+		handle @valid_key_ollama {
+			handle_path /ollama/* {
+				reverse_proxy qwen:8080 {
+					transport http {
+						response_header_timeout 10m
+					}
+				}
+			}
+		}
+		respond `{"error": "Access denied. Invalid API Key."}` 401
+	}
+
+	handle {
+		respond `{"error": "not found"}` 404
+	}
+}

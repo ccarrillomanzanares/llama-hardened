@@ -1,0 +1,9 @@
+# Modelos GGUF grandes — no versionar (se copian al VPS directamente)
+models/*.gguf
+
+# Secrets
+.env
+
+# Entorno local
+__pycache__/
+*.pyc
