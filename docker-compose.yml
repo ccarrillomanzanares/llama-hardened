@@ -3,87 +3,61 @@ services:
     image: caddy:alpine
     container_name: llama-proxy
     security_opt:
-      - no-new-privileges:true
+    - no-new-privileges:true
     cap_drop:
-      - ALL
+    - ALL
     cap_add:
-      - NET_BIND_SERVICE
+    - NET_BIND_SERVICE
     read_only: true
     tmpfs:
-      - /tmp
+    - /tmp
     networks:
-      - frontend-network
-      - backend-network
+    - frontend-network
+    - backend-network
     ports:
-      - "8443:443"
+    - 8443:443
     environment:
-      - OLLAMA_API_KEY=${OLLAMA_API_KEY}
-      - DOMAIN=${DOMAIN:-localhost}
-      - EMAIL_ADMIN=${EMAIL_ADMIN:-admin@localhost}
+    - OLLAMA_API_KEY=${OLLAMA_API_KEY}
+    - DOMAIN=${DOMAIN:-localhost}
+    - EMAIL_ADMIN=${EMAIL_ADMIN:-admin@localhost}
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./Caddyfile.ext:/etc/caddy/Caddyfile.ext:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    restart: always
-    depends_on:
-      llama:
-        condition: service_started
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-
-  llama:
-    build: .
-    container_name: llama-core
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    read_only: true
-    tmpfs:
-      - /tmp
-    volumes:
-      - ./models:/models:ro
-    networks:
-      - backend-network
+    - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    - ./Caddyfile.ext:/etc/caddy/Caddyfile.ext:ro
+    - caddy_data:/data
+    - caddy_config:/config
     restart: always
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
-
+        max-size: 10m
+        max-file: '3'
   qwen:
     build: .
     container_name: llama-qwen
     security_opt:
-      - no-new-privileges:true
+    - no-new-privileges:true
     cap_drop:
-      - ALL
+    - ALL
     read_only: true
     tmpfs:
-      - /tmp
-    entrypoint: ["/entrypoint-qwen.sh"]
+    - /tmp
+    entrypoint:
+    - /entrypoint-qwen36.sh
     volumes:
-      - ./models:/models:ro
+    - ./models:/models:ro
     networks:
-      - backend-network
+    - backend-network
     restart: always
     logging:
-      driver: "json-file"
+      driver: json-file
       options:
-        max-size: "10m"
-        max-file: "3"
-
+        max-size: 10m
+        max-file: '3'
 networks:
   frontend-network:
     driver: bridge
   backend-network:
     driver: bridge
-
 volumes:
-  caddy_data:
-  caddy_config:
+  caddy_data: null
+  caddy_config: null

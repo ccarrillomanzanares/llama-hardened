@@ -22,7 +22,7 @@
 		respond "OK" 200
 	}
 
-	# API de llama-server (OpenAI-compat /v1): SIEMPRE requiere X-API-Key válida.
+	# API OpenAI-compat (/v1): alias legacy -> sirve el MISMO modelo que /ollama (Qwen3.6).
 	@llama_api {
 		path /v1/*
 	}
@@ -31,7 +31,7 @@
 			header X-API-Key "{$OLLAMA_API_KEY}"
 		}
 		handle @valid_key {
-			reverse_proxy llama:8080 {
+			reverse_proxy qwen:8080 {
 				transport http {
 					response_header_timeout 10m
 				}
