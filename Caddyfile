@@ -22,7 +22,7 @@
 		respond "OK" 200
 	}
 
-	# API OpenAI-compat (/v1): alias legacy -> sirve el MISMO modelo que /ollama (Qwen3.6).
+	# /v1/*: API OpenAI-compat. Es el MISMO modelo que /ollama (Qwen3.6-35B-A3B).
 	@llama_api {
 		path /v1/*
 	}
@@ -40,7 +40,9 @@
 		respond `{"error": "Access denied. Invalid API Key."}` 401
 	}
 
-	# API de Qwen3.5 (OpenAI-compat bajo /ollama/*): misma key, distinto modelo.
+	# /ollama/*: alias legacy. NO es "otro modelo": apunta al MISMO qwen:8080 que /v1.
+	# Lo consume aios-agent y la ruta va escrita en las ISOs ya distribuidas, asi que
+	# NO retirar sin actualizar aios-agent/setup.py y reconstruir la ISO.
 	@ollama_api {
 		path /ollama/*
 	}

@@ -1,0 +1,9 @@
+# Placeholder intentionally left empty.
+#
+# It used to define /shell/*, routing to a `llama-shell` container for the
+# fine-tuned Qwen3.5-0.8B command generator. Removed: no such container is
+# running or defined in docker-compose.yml, so the route could only 502.
+#
+# This file is still bind-mounted by the running proxy container. It exists only
+# to keep that mount valid; the mount is dropped from docker-compose.yml, so
+# after the next `docker compose up -d --no-deps proxy` this file can be deleted.

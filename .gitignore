@@ -7,3 +7,17 @@ models/*.gguf
 # Entorno local
 __pycache__/
 *.pyc
+
+# Copias y borradores locales
+*.bak
+*.bak-*
+*.pre-inline
+*.k2
+
+# Binarios precompilados de llama.cpp: el Dockerfile los copia (COPY bin/, COPY lib/*.so*),
+# se suben al VPS a mano y no se versionan (90 MB que no se pueden quitar del historial).
+# OJO: siguen siendo necesarios EN DISCO para poder construir la imagen.
+bin/
+lib/
+bin.fork-k2/
+lib.fork-k2/

@@ -22,7 +22,6 @@ services:
     - EMAIL_ADMIN=${EMAIL_ADMIN:-admin@localhost}
     volumes:
     - ./Caddyfile:/etc/caddy/Caddyfile:ro
-    - ./Caddyfile.ext:/etc/caddy/Caddyfile.ext:ro
     - caddy_data:/data
     - caddy_config:/config
     restart: always
